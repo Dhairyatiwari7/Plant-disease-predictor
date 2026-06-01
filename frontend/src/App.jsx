@@ -26,7 +26,7 @@ function App() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <div className="flex flex-col min-h-screen bg-background text-on-background">
-        {isLoggedIn && <Header />}
+        <Header />
         <Routes>
           {/* Public Routes */}
           <Route
