@@ -37,6 +37,7 @@ app = FastAPI(
 )
 
 DEFAULT_ALLOWED_ORIGINS = [
+    "https://plant-disease-frontend-r4s5.onrender.com",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://localhost:3001",
