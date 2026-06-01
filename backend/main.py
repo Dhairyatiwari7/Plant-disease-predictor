@@ -2,6 +2,8 @@ import logging
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
 
 from config import (
@@ -51,17 +53,22 @@ app.add_middleware(
     max_age=600,
 )
 
+# Mount static frontend build (assumes React build output in "frontend/build")
+app.mount("/", StaticFiles(directory="frontend/build", html=True), name="static")
+
 app.include_router(user_router)
 app.include_router(disease_router)
 app.include_router(api_router)
 
-@app.get("/")
-async def root():
-    return {
-        "message": f"Welcome to {PROJECT_NAME}",
-        "version": VERSION,
-        "docs": "/docs"
-    }
+@app.get("/api/health")
+async def api_health_check():
+    return {"status": "ok", "message": "API is running"}
+
+# Fallback route for client-side routing (e.g., React Router)
+@app.get("/{full_path:path}")
+async def serve_spa(full_path: str):
+    index_path = "frontend/build/index.html"
+    return FileResponse(index_path)
 
 if __name__ == "__main__":
     uvicorn.run(
