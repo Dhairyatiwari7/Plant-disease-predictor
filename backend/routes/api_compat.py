@@ -71,7 +71,7 @@ async def api_register(user: UserCreate):
     if existing_user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists")
 
-    user_dict = user.dict()
+    user_dict = user.model_dump()
     user_dict["hashed_password"] = get_password_hash(user_dict.pop("password"))
     user_dict["is_active"] = True
     user_dict["created_at"] = datetime.utcnow()
@@ -265,7 +265,7 @@ async def api_get_profile(current_user: User = Depends(get_current_active_user))
 @router.put("/users/profile")
 async def api_update_profile(user_update: UserUpdate, current_user: User = Depends(get_current_active_user)):
     db = Database.get_database()
-    update_data = user_update.dict(exclude_unset=True)
+    update_data = user_update.model_dump(exclude_unset=True)
     if "password" in update_data:
         update_data["hashed_password"] = get_password_hash(update_data.pop("password"))
     if update_data:

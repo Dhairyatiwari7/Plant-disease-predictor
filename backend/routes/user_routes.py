@@ -21,7 +21,7 @@ async def create_user(user: UserCreate):
     if existing_user:
         raise HTTPException(status_code=400, detail="User already exists")
 
-    user_dict = user.dict()
+    user_dict = user.model_dump()
     user_dict["hashed_password"] = get_password_hash(user_dict.pop("password"))
     user_dict["is_active"] = True
     user_dict["created_at"] = datetime.utcnow()
@@ -56,7 +56,7 @@ async def update_user_me(
     current_user: User = Depends(get_current_active_user)
 ):
     db = Database.get_database()
-    update_data = user_update.dict(exclude_unset=True)
+    update_data = user_update.model_dump(exclude_unset=True)
 
     if "password" in update_data:
         update_data["hashed_password"] = get_password_hash(update_data.pop("password"))
