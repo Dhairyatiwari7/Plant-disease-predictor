@@ -8,7 +8,6 @@ from config import (
     PROJECT_NAME,
     PROJECT_DESCRIPTION,
     VERSION,
-    ALLOWED_ORIGINS,
     LOG_LEVEL,
     DEBUG
 )
@@ -36,18 +35,14 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-DEFAULT_ALLOWED_ORIGINS = [
-    "https://plant-disease-frontend-r4s5.onrender.com",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:3001",
-    "http://127.0.0.1:3001",
-]
-
 # Add CORS middleware BEFORE all routes
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS or DEFAULT_ALLOWED_ORIGINS or ["*"],
+    allow_origins=[
+        "https://plant-disease-frontend-r4s5.onrender.com",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
     allow_origin_regex=r"http://(localhost|127\.0\.0\.1)(:\d+)?",
     allow_credentials=True,
     allow_methods=["*"],
