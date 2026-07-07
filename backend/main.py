@@ -1,8 +1,8 @@
 import logging
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 
 from config import (
@@ -61,10 +61,12 @@ app.include_router(api_router)
 async def api_health_check():
     return {"status": "ok", "message": "API is running"}
 
-@app.get("/{full_path:path}")
-async def serve_spa(full_path: str):
-    index_path = "frontend/build/index.html"
-    return FileResponse(index_path)
+@app.exception_handler(404)
+async def not_found_handler(request: Request, exc):
+    return JSONResponse(
+        status_code=404,
+        content={"detail": f"Route '{request.url.path}' not found"}
+    )
 
 if __name__ == "__main__":
     uvicorn.run(
